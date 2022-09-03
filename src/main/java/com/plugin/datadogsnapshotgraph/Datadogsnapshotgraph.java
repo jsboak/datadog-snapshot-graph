@@ -81,7 +81,7 @@ public class Datadogsnapshotgraph implements StepPlugin, Describable {
                             java.time.OffsetDateTime.now().plusDays(-1).toInstant().getEpochSecond(),
                             java.time.OffsetDateTime.now().toInstant().getEpochSecond(),
                             new GetGraphSnapshotOptionalParameters()
-                                    .metricQuery("avg:system.load.1{*}")
+                                    .metricQuery(configuration.get("metricQuery").toString())
                                     .title("System load")
                                     .height(400L)
                                     .width(600L));
