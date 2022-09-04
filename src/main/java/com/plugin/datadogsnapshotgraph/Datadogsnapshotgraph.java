@@ -17,10 +17,15 @@ import com.dtolabs.rundeck.plugins.step.PluginStepContext;
 import com.dtolabs.rundeck.plugins.step.StepPlugin;
 import com.dtolabs.rundeck.plugins.util.DescriptionBuilder;
 import com.dtolabs.rundeck.plugins.util.PropertyBuilder;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static com.plugin.datadogsnapshotgraph.datadogUtil.getPasswordFromKeyStorage;
 
@@ -88,6 +93,16 @@ public class Datadogsnapshotgraph implements StepPlugin, Describable {
                                     .height(400L)
                                     .width(600L));
 
+            Connection.Response html = Jsoup.connect(result.getSnapshotUrl()).ignoreContentType(true).execute();
+
+            while (!Objects.equals(html.contentType(), "image/png")) {
+
+//                System.out.println(html.contentType());
+                System.out.println("Snapshot still building");
+                html = Jsoup.connect(result.getSnapshotUrl()).ignoreContentType(true).execute();
+                TimeUnit.SECONDS.sleep(5);
+            }
+
             String html_out = "<body style=\"margin: 0px; background: #0e0e0e; height: 100%\"><img style=\"display: block;-webkit-user-select: none;margin: auto;cursor: zoom-in;background-color: hsl(0, 0%, 90%);transition: background-color 300ms;\" src=\"" + result.getSnapshotUrl() + "\" width=\"518\" height=\"345\"></body>";
 
             context.getLogger().log(2, html_out, meta);
@@ -98,6 +113,8 @@ public class Datadogsnapshotgraph implements StepPlugin, Describable {
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
             e.printStackTrace();
+        } catch (IOException | InterruptedException io) {
+            io.printStackTrace();
         }
     }
 

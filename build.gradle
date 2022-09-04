@@ -32,6 +32,7 @@ configurations{
 dependencies {
 
     implementation 'org.rundeck:rundeck-core:4.5.0-20220811'
+    implementation 'org.jsoup:jsoup:1.15.3'
     implementation ('com.datadoghq:datadog-api-client:2.2.0') {
         exclude group: "com.fasterxml.jackson.core"
         exclude group: "com.fasterxml.jackson.datatype"
@@ -42,9 +43,8 @@ dependencies {
     pluginLibs('com.datadoghq:datadog-api-client:2.2.0') {
         exclude group: "com.fasterxml.jackson.core"
         exclude group: "com.fasterxml.jackson.datatype"
-//        exclude group: "org.glassfish.jersey.media"
-
     }
+    pluginLibs('org.jsoup:jsoup:1.15.3')
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.8'
