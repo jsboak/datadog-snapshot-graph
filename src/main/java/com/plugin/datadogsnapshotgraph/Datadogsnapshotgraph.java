@@ -11,7 +11,6 @@ import com.dtolabs.rundeck.core.plugins.Plugin;
 import com.dtolabs.rundeck.core.plugins.configuration.Describable;
 import com.dtolabs.rundeck.core.plugins.configuration.Description;
 import com.dtolabs.rundeck.core.plugins.configuration.StringRenderingConstants;
-import com.dtolabs.rundeck.core.storage.StorageTree;
 import com.dtolabs.rundeck.plugins.ServiceNameConstants;
 import com.dtolabs.rundeck.plugins.descriptions.PluginDescription;
 import com.dtolabs.rundeck.plugins.step.PluginStepContext;
@@ -75,6 +74,9 @@ public class Datadogsnapshotgraph implements StepPlugin, Describable {
 
         SnapshotsApi apiInstance = new SnapshotsApi(defaultClient);
 
+        Map<String, String> meta = new HashMap<>();
+        meta.put("content-data-type", "text/html");
+
         try {
             GraphSnapshot result =
                     apiInstance.getGraphSnapshot(
@@ -85,7 +87,11 @@ public class Datadogsnapshotgraph implements StepPlugin, Describable {
                                     .title("System load")
                                     .height(400L)
                                     .width(600L));
-            System.out.println("<body style=\"margin: 0px; background: #0e0e0e; height: 100%\"><img style=\"display: block;-webkit-user-select: none;margin: auto;cursor: zoom-in;background-color: hsl(0, 0%, 90%);transition: background-color 300ms;\" src=\"" + result.getSnapshotUrl() + "\" width=\"518\" height=\"345\"></body>");
+
+            String html_out = "<body style=\"margin: 0px; background: #0e0e0e; height: 100%\"><img style=\"display: block;-webkit-user-select: none;margin: auto;cursor: zoom-in;background-color: hsl(0, 0%, 90%);transition: background-color 300ms;\" src=\"" + result.getSnapshotUrl() + "\" width=\"518\" height=\"345\"></body>";
+
+            context.getLogger().log(2, html_out, meta);
+
         } catch (ApiException e) {
             System.err.println("Exception when calling SnapshotsApi#getGraphSnapshot");
             System.err.println("Status code: " + e.getCode());
