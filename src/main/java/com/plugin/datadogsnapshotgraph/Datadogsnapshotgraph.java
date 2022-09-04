@@ -85,7 +85,7 @@ public class Datadogsnapshotgraph implements StepPlugin, Describable {
         try {
             GraphSnapshot result =
                     apiInstance.getGraphSnapshot(
-                            java.time.OffsetDateTime.now().plusDays(-1).toInstant().getEpochSecond(),
+                            java.time.OffsetDateTime.now().plusHours(-1).toInstant().getEpochSecond(),
                             java.time.OffsetDateTime.now().toInstant().getEpochSecond(),
                             new GetGraphSnapshotOptionalParameters()
                                     .metricQuery(configuration.get("metricQuery").toString())
@@ -93,6 +93,7 @@ public class Datadogsnapshotgraph implements StepPlugin, Describable {
                                     .height(400L)
                                     .width(600L));
 
+            TimeUnit.SECONDS.sleep(3);
             Connection.Response html = Jsoup.connect(result.getSnapshotUrl()).ignoreContentType(true).execute();
 
             while (!Objects.equals(html.contentType(), "image/png")) {
